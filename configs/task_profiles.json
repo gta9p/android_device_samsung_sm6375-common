@@ -1,11 +1,6 @@
 {
   "Attributes": [
     {
-      "Name": "GpisSfCpuset",
-      "Controller": "cpuset",
-      "File": "cpus"
-    },
-    {
       "Name": "LowCapacityCPUs",
       "Controller": "cpuset",
       "File": "background/cpus"
@@ -25,6 +20,7 @@
       "Controller": "cpuset",
       "File": "audio-app/cpus"
     },
+
     {
       "Name": "MemLimit",
       "Controller": "memory",
@@ -49,54 +45,10 @@
       "Name": "UClampMax",
       "Controller": "cpu",
       "File": "cpu.uclamp.max"
-    },
-    {
-      "Name": "ForegroundBoostCapacityCPUs",
-      "Controller": "cpuset",
-      "File": "foreground-boost/cpus"
     }
   ],
 
   "Profiles": [
-    {
-      "Name": "GpisSfCpusetJoin",
-      "Actions" : [
-        {
-          "Name" : "JoinCgroup",
-          "Params" :
-          {
-            "Controller": "cpuset",
-            "Path": "sf"
-          }
-        }
-      ]
-    },
-    {
-      "Name": "GpisSfCpusetEnable",
-      "Actions": [
-        {
-          "Name": "SetAttribute",
-          "Params":
-          {
-            "Name": "GpisSfCpuset",
-            "Value": "6-7"
-          }
-        }
-      ]
-    },
-    {
-      "Name": "GpisSfCpusetDisable",
-      "Actions": [
-        {
-          "Name": "SetAttribute",
-          "Params":
-          {
-            "Name": "GpisSfCpuset",
-            "Value": "0-5"
-          }
-        }
-      ]
-    },
     {
       "Name": "HighEnergySaving",
       "Actions": [
@@ -106,32 +58,6 @@
           {
             "Controller": "cpu",
             "Path": "background"
-          }
-        }
-      ]
-    },
-    {
-      "Name": "Frozen",
-      "Actions": [
-        {
-          "Name": "SetAttribute",
-          "Params":
-          {
-            "Name": "FreezerState",
-            "Value": "1"
-          }
-        }
-      ]
-    },
-    {
-      "Name": "Unfrozen",
-      "Actions": [
-        {
-          "Name": "SetAttribute",
-          "Params":
-          {
-            "Name": "FreezerState",
-            "Value": "0"
           }
         }
       ]
@@ -400,32 +326,6 @@
         }
       ]
     },
-    {
-      "Name": "SystemServicePerformance",
-      "Actions" : [
-        {
-          "Name" : "JoinCgroup",
-          "Params" :
-          {
-            "Controller": "cpu",
-            "Path": "foreground-boost"
-          }
-        }
-      ]
-    },
-    {
-      "Name": "SystemServiceCapacityHigh",
-      "Actions": [
-        {
-          "Name": "JoinCgroup",
-          "Params":
-          {
-            "Controller": "cpuset",
-            "Path": "foreground-boost"
-          }
-        }
-      ]
-    },
 
     {
       "Name": "BlkIOForeground",
@@ -616,27 +516,22 @@
       ]
     },
     {
-      "Name": "TopAppUsage",
+      "Name": "MidgroundProcess",
       "Actions": [
         {
           "Name": "JoinCgroup",
           "Params":
           {
-            "Controller": "cpuacct",
-            "Path": "top-app"
+            "Controller": "cpuset",
+            "Path": "midground"
           }
-        }
-      ]
-    },
-    {
-      "Name": "BackgroundUsage",
-      "Actions": [
+        },
         {
           "Name": "JoinCgroup",
           "Params":
           {
-            "Controller": "cpuacct",
-            "Path": "."
+            "Controller": "cpu",
+            "Path": "midground"
           }
         }
       ]
@@ -645,20 +540,12 @@
 
   "AggregateProfiles": [
     {
-      "Name": "GPIS_HINT_ENABLE",
-      "Profiles": [ "GpisSfCpusetEnable" ]
-    },
-    {
-      "Name": "GPIS_HINT_DISABLE",
-      "Profiles": [ "GpisSfCpusetDisable" ]
-    },
-    {
       "Name": "SCHED_SP_DEFAULT",
       "Profiles": [ "TimerSlackNormal" ]
     },
     {
       "Name": "SCHED_SP_BACKGROUND",
-      "Profiles": [ "HighEnergySaving", "LowIoPriority", "TimerSlackNormal" ]
+      "Profiles": [ "HighEnergySaving", "LowIoPriority", "TimerSlackHigh" ]
     },
     {
       "Name": "SCHED_SP_FOREGROUND",
@@ -674,31 +561,27 @@
     },
     {
       "Name": "CPUSET_SP_DEFAULT",
-      "Profiles": [ "TimerSlackNormal", "BackgroundUsage" ]
+      "Profiles": [ "TimerSlackNormal" ]
     },
     {
       "Name": "CPUSET_SP_BACKGROUND",
-      "Profiles": [ "HighEnergySaving", "ProcessCapacityLow", "LowIoPriority", "TimerSlackHigh", "BackgroundUsage" ]
+      "Profiles": [ "HighEnergySaving", "ProcessCapacityLow", "LowIoPriority", "TimerSlackHigh" ]
     },
     {
       "Name": "CPUSET_SP_FOREGROUND",
-      "Profiles": [ "HighPerformance", "ProcessCapacityHigh", "HighIoPriority", "TimerSlackNormal", "BackgroundUsage" ]
-    },
-    {
-      "Name": "CPUSET_SP_FOREGROUND_BOOST",
-      "Profiles": [ "SystemServicePerformance", "SystemServiceCapacityHigh", "HighIoPriority", "TimerSlackNormal" ]
+      "Profiles": [ "HighPerformance", "ProcessCapacityHigh", "HighIoPriority", "TimerSlackNormal" ]
     },
     {
       "Name": "CPUSET_SP_TOP_APP",
-      "Profiles": [ "MaxPerformance", "ProcessCapacityMax", "MaxIoPriority", "TimerSlackNormal", "TopAppUsage" ]
+      "Profiles": [ "MaxPerformance", "ProcessCapacityMax", "MaxIoPriority", "TimerSlackNormal" ]
     },
     {
       "Name": "CPUSET_SP_SYSTEM",
-      "Profiles": [ "ServiceCapacityLow", "TimerSlackNormal", "BackgroundUsage" ]
+      "Profiles": [ "ServiceCapacityLow", "TimerSlackNormal" ]
     },
     {
       "Name": "CPUSET_SP_RESTRICTED",
-      "Profiles": [ "ServiceCapacityRestricted", "TimerSlackNormal", "BackgroundUsage" ]
+      "Profiles": [ "ServiceCapacityRestricted", "TimerSlackNormal" ]
     }
   ]
 }

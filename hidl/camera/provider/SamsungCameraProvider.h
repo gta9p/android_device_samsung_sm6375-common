@@ -16,14 +16,14 @@
 
 #ifndef SAMSUNG_CAMERA_PROVIDER_H
 
-#include "LegacyCameraProviderImpl_2_5.h"
+#include "LegacyCameraProviderImpl_2_4.h"
 
 #define SAMSUNG_CAMERA_DEBUG
 
-using ::android::hardware::camera::provider::V2_5::implementation::LegacyCameraProviderImpl_2_5;
+using ::android::hardware::camera::provider::V2_4::implementation::LegacyCameraProviderImpl_2_4;
 using ::android::hardware::Return;
 
-class SamsungCameraProvider : public LegacyCameraProviderImpl_2_5 {
+class SamsungCameraProvider : public LegacyCameraProviderImpl_2_4 {
 public:
     SamsungCameraProvider();
     ~SamsungCameraProvider();

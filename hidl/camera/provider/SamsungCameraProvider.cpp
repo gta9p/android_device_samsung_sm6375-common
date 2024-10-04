@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "SamsungCameraProvider@2.6"
+#define LOG_TAG "SamsungCameraProvider@2.4"
 
 #include "SamsungCameraProvider.h"
 
@@ -25,7 +25,7 @@ using ::android::OK;
 
 const int kMaxCameraIdLen = 16;
 
-SamsungCameraProvider::SamsungCameraProvider() : LegacyCameraProviderImpl_2_5() {
+SamsungCameraProvider::SamsungCameraProvider() : LegacyCameraProviderImpl_2_4() {
 
     // macro
     mExtraIDs.push_back(54);

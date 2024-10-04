@@ -82,9 +82,7 @@ on boot
     # Set the default message loglevel to KERN_INFO
     write /proc/sys/kernel/printk "4 6 1 7"
 
-    # Allow access to emmc rawdump block partition and dload sysfs node
-    chown root system /dev/block/bootdevice/by-name/rawdump
-    chmod 0660 /dev/block/bootdevice/by-name/rawdump
+    # Allow access to dload sysfs node
     chown root system /sys/kernel/dload/emmc_dload
     chmod 0660 /sys/kernel/dload/emmc_dload
     chown root system /dev/block/bootdevice/by-name/ramdump
@@ -105,16 +103,16 @@ on boot
     # write /sys/class/block/mmcblk1/queue/scheduler bfq
 
     # update io-scheduler tunables
-    # write /sys/block/sda/queue/iosched/slice_idle 0
-    # write /sys/block/sdb/queue/iosched/slice_idle 0
-    # write /sys/block/sdc/queue/iosched/slice_idle 0
-    # write /sys/block/sdd/queue/iosched/slice_idle 0
-    # write /sys/block/sde/queue/iosched/slice_idle 0
-    # write /sys/block/sdf/queue/iosched/slice_idle 0
-    # write /sys/block/sdg/queue/iosched/slice_idle 0
-    # write /sys/block/sdh/queue/iosched/slice_idle 0
-    # write /sys/class/block/mmcblk0/queue/iosched/slice_idle 0
-    # write /sys/class/block/mmcblk1/queue/iosched/slice_idle 0
+    write /sys/block/sda/queue/iosched/slice_idle 0
+    write /sys/block/sdb/queue/iosched/slice_idle 0
+    write /sys/block/sdc/queue/iosched/slice_idle 0
+    write /sys/block/sdd/queue/iosched/slice_idle 0
+    write /sys/block/sde/queue/iosched/slice_idle 0
+    write /sys/block/sdf/queue/iosched/slice_idle 0
+    write /sys/block/sdg/queue/iosched/slice_idle 0
+    write /sys/block/sdh/queue/iosched/slice_idle 0
+    write /sys/class/block/mmcblk0/queue/iosched/slice_idle 0
+    write /sys/class/block/mmcblk1/queue/iosched/slice_idle 0
 
 on post-fs-data
     # Create directory used for dump collection

@@ -29,21 +29,17 @@
 #
 
 import /vendor/etc/init/hw/init.samsung.bsp.rc
-import /vendor/etc/init/hw/init.samsung.power.rc
-import /vendor/etc/init/hw/init.samsung.display.rc
 
 on early-init
     mkdir /mnt/vendor/efs 0771 radio system
     mkdir /mnt/vendor/persist 0771 root system
 
 on init
-    symlink /dev/block/by-name/steady /dev/block/steady
-    symlink /dev/block/by-name/persistent /dev/block/persistent
+    symlink /dev/block/bootdevice/by-name/steady  /dev/block/steady
+    symlink /dev/block/bootdevice/by-name/persistent  /dev/block/persistent
 
-on late-init
-
+# Create carrier folder for HiddenMenu
 on post-fs
-    # Create carrier folder for HiddenMenu
     mkdir /efs/carrier 0755 system system
     restorecon_recursive /efs
 
@@ -51,30 +47,8 @@ on post-fs
     chown radio system /mnt/vendor/efs
     chmod 0771 /mnt/vendor/efs
 
-    chown system radio /efs
-    chmod 0771 /efs
-    restorecon /efs
-
-on late-fs
-
-on post-fs-data
-    # carrier partition
-    chown system system /carrier
-    chmod 0771 /carrier
-    restorecon /carrier
-
-on boot
-# Meta event
-    chown system radio /sys/class/sensors/sensor_dev/flush
-
-on shutdown
-
-# service definition
-
-# on property triggers
+# Permissions for Power
+   chown radio system /sys/module/lpm_levels/parameters/secdebug
+   chmod 664 /sys/module/lpm_levels/parameters/secdebug
 
 
-service factory_ssc /vendor/bin/factory.ssc
-    class core
-    user system
-    group system radio inet diag net_admin net_raw sdcard_rw sdcard_r media_rw

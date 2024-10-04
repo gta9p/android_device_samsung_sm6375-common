@@ -26,13 +26,10 @@ cc_binary {
         "SamsungCameraProvider.cpp",
         "service.cpp"
     ],
-    init_rc: ["android.hardware.camera.provider@2.6-service_64.samsung-sm6375.rc"],
+    init_rc: ["android.hardware.camera.provider@2.4-service_64"],
     shared_libs: [
         "android.hardware.camera.provider@2.4",
         "android.hardware.camera.provider@2.4-legacy",
-        "android.hardware.camera.provider@2.5",
-        "android.hardware.camera.provider@2.5-legacy",
-        "android.hardware.camera.provider@2.6",
         "libbinder",
         "libcamera_metadata",
         "libcutils",
