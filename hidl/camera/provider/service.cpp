@@ -1,6 +1,6 @@
+
 /*
- * Copyright 2019 The Android Open Source Project
- * Copyright 2023 The LineageOS Project
+ * Copyright 2017 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,35 +14,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#define LOG_TAG "android.hardware.camera.provider@2.4-service_64"
-
-#include <android/hardware/camera/provider/2.6/ICameraProvider.h>
+#ifdef LAZY_SERVICE
+#define LOG_TAG "android.hardware.camera.provider@2.4-service-lazy"
+#else
+#define LOG_TAG "android.hardware.camera.provider@2.4-service"
+#endif
+#include <android/hardware/camera/provider/2.4/ICameraProvider.h>
 #include <binder/ProcessState.h>
-#include <hidl/HidlLazyUtils.h>
-#include <hidl/HidlTransportSupport.h>
-
-#include "CameraProvider_2_4.h"
-#include "SamsungCameraProvider.h"
-
+#include <cutils/properties.h>
+#include <hidl/LegacySupport.h>
+#include <malloc.h>
 using android::status_t;
+using android::hardware::defaultLazyPassthroughServiceImplementation;
+using android::hardware::defaultPassthroughServiceImplementation;
 using android::hardware::camera::provider::V2_4::ICameraProvider;
-
+#ifdef LAZY_SERVICE
+const bool kLazyService = true;
+#else
+const bool kLazyService = false;
+#endif
 int main()
 {
-    using namespace android::hardware::camera::provider::V2_4::implementation;
-
     ALOGI("CameraProvider@2.4 legacy service is starting.");
-
-    ::android::hardware::configureRpcThreadpool(/*threads*/ HWBINDER_THREAD_COUNT, /*willJoin*/ true);
-
-    ::android::sp<ICameraProvider> provider = new CameraProvider<SamsungCameraProvider>();
-
-    status_t status = provider->registerAsService("legacy/0");
-    LOG_ALWAYS_FATAL_IF(status != android::OK, "Error while registering provider service: %d",
-            status);
-
-    ::android::hardware::joinRpcThreadpool();
-
-    return 0;
+    // The camera HAL may communicate to other vendor components via
+    // /dev/vndbinder
+    android::ProcessState::initWithDriver("/dev/vndbinder");
+    // b/166675194
+    if (property_get_bool("ro.vendor.camera.provider24.disable_mem_init", false)) {
+        if (mallopt(M_BIONIC_ZERO_INIT, 0) == 0) {
+            // Note - heap initialization is only present on devices with Scudo.
+            // Devices with jemalloc don't have heap-init, and thus the mallopt
+            // will fail. On these devices, you probably just want to remove the
+            // property.
+            ALOGE("Disabling heap initialization failed.");
+        }
+    }
+    status_t status;
+    if (kLazyService) {
+        status = defaultLazyPassthroughServiceImplementation<ICameraProvider>("legacy/0",
+                                                                              /*maxThreads*/ 6);
+    } else {
+        status = defaultPassthroughServiceImplementation<ICameraProvider>("legacy/0",
+                                                                          /*maxThreads*/ 6);
+    }
+    return status;
 }
