@@ -13,7 +13,7 @@
 #include "init_sm6375.h"
 
 #define MODEL_NAME_LEN 5
-#define MODEL_NAME_LEN_A23 6
+#define MODEL_NAME_LEN_GTA9P 6
 
 static void property_override(char const prop[], char const value[]) {
     prop_info *pi;
@@ -37,8 +37,8 @@ void vendor_load_properties()
 {
     const std::string bootloader = android::base::GetProperty("ro.bootloader", "");
     std::string bl_model;
-    if (bootloader.substr(0, MODEL_NAME_LEN_A23) == "A236B") {
-        bl_model = bootloader.substr(0, MODEL_NAME_LEN_A23);
+    if (bootloader.substr(0, MODEL_NAME_LEN_A23) == "GTA9P") {
+        bl_model = bootloader.substr(0, MODEL_NAME_LEN_GTA9P);
     } else {
         bl_model = bootloader.substr(0, MODEL_NAME_LEN);
     }
