@@ -37,7 +37,7 @@ void vendor_load_properties()
 {
     const std::string bootloader = android::base::GetProperty("ro.bootloader", "");
     std::string bl_model;
-    if (bootloader.substr(0, MODEL_NAME_LEN_A23) == "GTA9P") {
+    if (bootloader.substr(0, MODEL_NAME_LEN_GTA9P) == "GTA9P") {
         bl_model = bootloader.substr(0, MODEL_NAME_LEN_GTA9P);
     } else {
         bl_model = bootloader.substr(0, MODEL_NAME_LEN);
@@ -59,7 +59,7 @@ void vendor_load_properties()
 
     if (device.size() == 0) {
         LOG(ERROR) << "Could not detect device, forcing a23xq";
-        device = "a23xq";
+        device = "gta9p";
     }
 
     name = device + "xx";
